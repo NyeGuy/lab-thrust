@@ -24,6 +24,7 @@ export class PlayScene extends Phaser.Scene {
   private dockAngle = 0;
   private undockBan = 0;
   private inRange: Planet | null = null;
+  private lastDockable: Planet | null = null;
 
   constructor() {
     super({ key: "play" });
@@ -87,9 +88,6 @@ export class PlayScene extends Phaser.Scene {
     this.flame.setAlpha(0);
 
     this.physics.add.collider(this.ship, this.sun);
-    for (const planet of this.planets) {
-      this.physics.add.collider(this.ship, planet.sprite);
-    }
 
     this.cameras.main.startFollow(this.ship, false, FEEL.cameraLerp, FEEL.cameraLerp);
     this.cameras.main.setBackgroundColor(0x07080d);
@@ -180,15 +178,13 @@ export class PlayScene extends Phaser.Scene {
     }
 
     this.refreshDockRange();
-    if (this.inRange) {
-      setDockMode("dock");
-      if (consumeDockAction()) {
-        this.dockTo(this.inRange);
+    if (consumeDockAction()) {
+      const target = this.inRange ?? this.lastDockable;
+      if (target) {
+        this.dockTo(target);
       }
-    } else {
-      setDockMode("hidden");
-      consumeDockAction();
     }
+    setDockMode(this.docked ? "undock" : this.inRange ? "dock" : "hidden");
 
     this.syncCamera(vx, vy);
     this.parallax();
@@ -219,6 +215,9 @@ export class PlayScene extends Phaser.Scene {
       }
     }
     this.inRange = best;
+    if (best) {
+      this.lastDockable = best;
+    }
   }
 
   private dockTo(planet: Planet): void {
@@ -248,6 +247,7 @@ export class PlayScene extends Phaser.Scene {
     this.docked = null;
     this.inRange = null;
     this.undockBan = FEEL.undockCooldown;
+    this.lastDockable = null;
     if (this.ship.body) {
       this.ship.body.enable = true;
     }
