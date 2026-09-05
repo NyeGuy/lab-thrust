@@ -87,13 +87,13 @@ export class PlayScene extends Phaser.Scene {
     this.ship.setCollideWorldBounds(false);
 
     this.exhaust = this.add.particles(this.ship.x, this.ship.y, "puff", {
-      lifespan: { min: 420, max: 780 },
-      speed: { min: 6, max: 28 },
+      lifespan: { min: 520, max: 920 },
+      speed: { min: 4, max: 20 },
       angle: { min: 0, max: 360 },
-      scale: { start: 0.28, end: 1.35 },
-      alpha: { start: 0.42, end: 0 },
-      frequency: 38,
-      quantity: 2,
+      scale: { start: 0.42, end: 1.8 },
+      alpha: { start: 0.58, end: 0 },
+      frequency: 26,
+      quantity: 3,
       blendMode: "ADD",
       emitting: false,
     });
@@ -190,7 +190,7 @@ export class PlayScene extends Phaser.Scene {
     );
     this.exhaust.emitting = burning;
     if (burning) {
-      this.exhaust.setQuantity(1 + Math.round(stick.magnitude * 2));
+      this.exhaust.setQuantity(2 + Math.round(stick.magnitude * 3));
     }
 
     this.refreshDockRange();

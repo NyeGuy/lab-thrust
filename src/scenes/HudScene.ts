@@ -62,8 +62,8 @@ export class HudScene extends Phaser.Scene {
     this.barFill.setScrollFactor(0);
     this.barFill.setDepth(13);
 
-    this.dockBtn = this.add.circle(0, 0, 34, 0xffffff, 0.12);
-    this.dockBtn.setStrokeStyle(2, 0xffffff, 0.4);
+    this.dockBtn = this.add.circle(0, 0, 40, 0xffffff, 0.16);
+    this.dockBtn.setStrokeStyle(2, 0xa8fff0, 0.55);
     this.dockBtn.setScrollFactor(0);
     this.dockBtn.setDepth(14);
     this.dockBtn.setVisible(false);
@@ -117,7 +117,7 @@ export class HudScene extends Phaser.Scene {
     this.hint.setPosition(mapRight + this.barWidth / 2, barY + 16);
     this.barTrack.setPosition(mapRight + this.barWidth / 2, barY);
     this.barFill.setPosition(mapRight + 4, barY);
-    this.dockX = this.originX + FEEL.stickRadius + 52;
+    this.dockX = this.originX + FEEL.stickRadius + 68;
     this.dockY = this.originY;
     this.dockBtn.setPosition(this.dockX, this.dockY);
     this.dockLabel.setPosition(this.dockX, this.dockY);
@@ -203,6 +203,8 @@ export class HudScene extends Phaser.Scene {
     this.dockLabel.setVisible(show);
     if (show) {
       this.dockLabel.setText(dock);
+      const pulse = 0.16 + 0.1 * (0.5 + 0.5 * Math.sin(_time / 260));
+      this.dockBtn.setFillStyle(0xa8fff0, pulse);
     }
 
     this.drawMap();
@@ -238,7 +240,7 @@ export class HudScene extends Phaser.Scene {
     }
     const dx = pointer.position.x - this.dockX;
     const dy = pointer.position.y - this.dockY;
-    return dx * dx + dy * dy <= 40 * 40;
+    return dx * dx + dy * dy <= 50 * 50;
   }
 
   private fadeHint(): void {
