@@ -2,7 +2,7 @@
 
 Mobile ship-feel POC. Open it, drag the stick, close it. Feel is the whole product for v0.
 
-One ship, one virtual joystick (direction = thrust, how hard you push = how hard you thrust), two or three planets as scenery. No menus, no sun, no characters, no trading.
+One ship, one virtual joystick (direction = thrust, how hard you push = how hard you thrust), two or three planets as scenery, and an energy bar that rations burns. No menus, no sun, no characters, no trading.
 
 ## Run locally
 
@@ -31,15 +31,16 @@ Graphics are generated at runtime. No image assets.
 
 ## Feel notes
 
-Tunables live in `src/feel.ts`. Current v0:
+Tunables live in `src/feel.ts`. After the first playtest (softer, more vacuum, energy rationing):
 
-- **Thrust accel** `580` px/s² at full stick. Direction matches the stick; magnitude is remapped after the deadzone.
-- **Max speed** `340` px/s. Caps the rush without killing a hard push.
-- **Drag** `42` px/s² linear. Release and you still coast for a few seconds; not ice-rink, not brakes.
-- **Stick deadzone** `0.14`, then a light `1.12` exponent so the first third of the pad is finer. Ring radius `70` px plus `28` px grab pad, parked in the bottom-left above the safe-area inset.
-- **Facing** turns toward thrust at `10` rad/s while you push, then eases toward velocity at `3.6` rad/s when you let go (only if you are still moving).
-- **Camera** follow lerp `0.09`, plus up to `72` px of look-ahead along velocity.
-- **Planets** are circle bodies with bounce `0.72` and a cheap inverse-square tug (mass `2.4e6`, cap `88` px/s², range `520`). The stick always wins.
+- **Thrust accel** `340` px/s² at full stick (was `580`). Same mapping — direction is the stick — but a burn is a nudge, not a snap.
+- **Max speed** `300` px/s (was `340`).
+- **Drag** `14` px/s² linear (was `42`). A release still coasts for a long while so you can adjust mid-path instead of holding the stick every frame.
+- **Stick deadzone** `0.18` (was `0.14`), exponent `1.4` (was `1.12`) so light pressure stays fine. Ring radius `70` px plus `28` px grab pad, bottom-left above the safe-area inset.
+- **Facing** turns toward thrust at `6.8` rad/s (was `10`), then eases toward velocity at `2.4` rad/s (was `3.6`) while coasting.
+- **Camera** follow lerp `0.07` (was `0.09`), look-ahead `88` px (was `72`).
+- **Planets** bounce `0.68`, gravity mass `2.2e6`, cap `70` px/s², range `520`.
+- **Energy** full tank `1`. Full stick drains at `0.4` /s (~2.5s empty). Regen `0.155` /s while not burning (~6.5s full). Empty = stick still moves, no burn. Bar sits under the safe area at the top; it flashes if you push on an empty tank.
 
 Touch is first. Mouse drag on the same circle works for desktop.
 

@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { resetEnergy, tickEnergy } from "../energy";
 import { FEEL } from "../feel";
 import { getStick } from "../input/stickState";
 import { createTextures } from "../textures";
@@ -60,6 +61,7 @@ export class PlayScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x07080d);
     this.cameras.main.setRoundPixels(true);
 
+    resetEnergy();
     this.scale.on("resize", this.onResize, this);
     this.scene.launch("hud");
 
@@ -76,8 +78,11 @@ export class PlayScene extends Phaser.Scene {
       return;
     }
 
-    let ax = stick.x * FEEL.thrustAccel;
-    let ay = stick.y * FEEL.thrustAccel;
+    const wantThrust = stick.magnitude > 0;
+    const burning = tickEnergy(dt, wantThrust, stick.magnitude);
+
+    let ax = burning ? stick.x * FEEL.thrustAccel : 0;
+    let ay = burning ? stick.y * FEEL.thrustAccel : 0;
 
     for (const planet of this.planets) {
       const dx = planet.sprite.x - this.ship.x;
@@ -96,19 +101,18 @@ export class PlayScene extends Phaser.Scene {
     const vx = body.velocity.x;
     const vy = body.velocity.y;
     const speed = Math.hypot(vx, vy);
-    const thrusting = stick.magnitude > 0;
-    const target = thrusting
+    const target = burning
       ? Math.atan2(stick.y, stick.x)
       : Math.atan2(vy, vx);
-    const shouldFace = thrusting || speed > FEEL.faceMinSpeed;
+    const shouldFace = burning || speed > FEEL.faceMinSpeed;
     if (shouldFace) {
-      const rate = thrusting ? FEEL.turnRateThrust : FEEL.turnRateCoast;
+      const rate = burning ? FEEL.turnRateThrust : FEEL.turnRateCoast;
       this.ship.rotation = Phaser.Math.Angle.RotateTo(this.ship.rotation, target, rate * dt);
     }
 
     this.flame.setPosition(this.ship.x, this.ship.y);
     this.flame.setRotation(this.ship.rotation);
-    if (thrusting) {
+    if (burning) {
       const pulse = 0.55 + 0.45 * stick.magnitude;
       this.flame.setAlpha(0.35 + 0.55 * stick.magnitude);
       this.flame.setScale(0.7 + 0.7 * stick.magnitude, pulse);

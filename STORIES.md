@@ -8,7 +8,11 @@ You do not tap a button and then wait for a heading. The circle is already there
 
 ## Coast is a kind of quiet
 
-Let go and the burn dies, but the ship does not. Drag is light on purpose. You slide past the clay world, then the ice one, and the nose slowly agrees with the path you are already on. The interesting part is the half-second after you release.
+Let go and the burn dies, but the ship does not. Drag is light on purpose. You slide past the clay world, then the ice one, and the nose slowly agrees with the path you are already on. The interesting part is the seconds after you release — room to think, then a small correction.
+
+## Burns are a budget
+
+The bar at the top is the only clock. A hard push empties it. Coasting fills it. You learn the short tap: enough delta-v to miss the clay world, then hands off while the tank sips. Hold the stick like a throttle and you sit in the quiet, flame gone, waiting for a mouthful of green.
 
 ## A planet is a suggestion
 

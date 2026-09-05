@@ -1,15 +1,21 @@
 import Phaser from "phaser";
+import { getEnergy } from "../energy";
 import { FEEL, remapStick, readSafeInsets, idleStick } from "../feel";
-import { setStick } from "../input/stickState";
+import { getStick, setStick } from "../input/stickState";
 
 export class HudScene extends Phaser.Scene {
   private ring!: Phaser.GameObjects.Arc;
   private knob!: Phaser.GameObjects.Arc;
   private hint!: Phaser.GameObjects.Text;
+  private barTrack!: Phaser.GameObjects.Rectangle;
+  private barFill!: Phaser.GameObjects.Rectangle;
+  private barWidth = 220;
+  private barInner = 212;
   private pointerId: number | null = null;
   private originX = 0;
   private originY = 0;
   private hintFading = false;
+  private emptyPulse = 0;
 
   constructor() {
     super({ key: "hud" });
@@ -37,6 +43,16 @@ export class HudScene extends Phaser.Scene {
       .setAlpha(0.78)
       .setDepth(12);
 
+    this.barTrack = this.add.rectangle(0, 0, this.barWidth, 10, 0xffffff, 0.1);
+    this.barTrack.setStrokeStyle(1, 0xffffff, 0.28);
+    this.barTrack.setScrollFactor(0);
+    this.barTrack.setDepth(12);
+
+    this.barFill = this.add.rectangle(0, 0, this.barInner, 6, 0x7ee8ff, 0.92);
+    this.barFill.setOrigin(0, 0.5);
+    this.barFill.setScrollFactor(0);
+    this.barFill.setDepth(13);
+
     this.layout();
     this.scale.on("resize", this.layout, this);
 
@@ -60,7 +76,13 @@ export class HudScene extends Phaser.Scene {
     this.originY = h - safe.bottom - margin - FEEL.stickRadius;
     this.ring.setPosition(this.originX, this.originY);
     this.knob.setPosition(this.originX, this.originY);
-    this.hint.setPosition(w / 2, safe.top + 18);
+    this.barWidth = Math.min(220, Math.max(160, w - 48));
+    this.barInner = this.barWidth - 8;
+    this.barTrack.setSize(this.barWidth, 10);
+    this.barFill.setSize(this.barInner, 6);
+    this.hint.setPosition(w / 2, safe.top + 14);
+    this.barTrack.setPosition(w / 2, safe.top + 42);
+    this.barFill.setPosition(w / 2 - this.barInner / 2, safe.top + 42);
     if (this.pointerId === null) {
       setStick(idleStick);
     }
@@ -114,6 +136,25 @@ export class HudScene extends Phaser.Scene {
     });
   }
 
+  update(_time: number, delta: number): void {
+    const energy = getEnergy();
+    this.barFill.setScale(Math.max(0.001, energy), 1);
+    this.barFill.setVisible(energy > 0);
+    this.barFill.setFillStyle(energyColor(energy), 0.92);
+
+    const dry = getStick().active && energy <= 0;
+    if (dry) {
+      this.emptyPulse += delta * 0.01;
+      const flash = 0.22 + 0.28 * (0.5 + 0.5 * Math.sin(this.emptyPulse * 7));
+      this.barTrack.setStrokeStyle(2, 0xff9a9a, 0.35 + flash);
+      this.barTrack.setFillStyle(0xff6a6a, 0.08 + flash * 0.25);
+    } else {
+      this.emptyPulse = 0;
+      this.barTrack.setStrokeStyle(1, 0xffffff, 0.28);
+      this.barTrack.setFillStyle(0xffffff, 0.1);
+    }
+  }
+
   private fadeHint(): void {
     if (this.hintFading) {
       return;
@@ -127,4 +168,14 @@ export class HudScene extends Phaser.Scene {
       ease: "Quad.easeOut",
     });
   }
+}
+
+function energyColor(energy: number): number {
+  if (energy > 0.35) {
+    return 0x7ee8ff;
+  }
+  if (energy > 0.14) {
+    return 0xf0c56a;
+  }
+  return 0xf08a8a;
 }

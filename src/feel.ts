@@ -1,38 +1,44 @@
 /** Tuned feel knobs. Numbers are the product for v0. */
 
 export const FEEL = {
-  /** Full-stick thrust acceleration, px/s². */
-  thrustAccel: 580,
+  /** Full-stick thrust acceleration, px/s². Softer than the first pass. */
+  thrustAccel: 340,
   /** Hard speed cap, px/s. */
-  maxSpeed: 340,
-  /** Linear drag, px/s². Light so a release still coasts. */
-  drag: 42,
+  maxSpeed: 300,
+  /** Linear drag, px/s². Low so a burn still coasts and you can adjust mid-path. */
+  drag: 14,
   /** Stick magnitude below this is treated as released (0–1). */
-  stickDeadzone: 0.14,
-  /** Slight ease so the first third of the stick is finer. */
-  stickExponent: 1.12,
+  stickDeadzone: 0.18,
+  /** Ease so light stick pressure stays fine (less twitch). */
+  stickExponent: 1.4,
   /** On-screen stick radius in CSS pixels. */
   stickRadius: 70,
   /** Extra grab padding around the ring. */
   stickHitPad: 28,
   /** How fast the nose turns toward thrust, rad/s. */
-  turnRateThrust: 10,
+  turnRateThrust: 6.8,
   /** How fast the nose eases toward velocity while coasting, rad/s. */
-  turnRateCoast: 3.6,
+  turnRateCoast: 2.4,
   /** Skip facing updates below this speed when not thrusting. */
-  faceMinSpeed: 28,
+  faceMinSpeed: 22,
   /** Camera follow lerp (0–1 per frame-ish Phaser lerp). */
-  cameraLerp: 0.09,
+  cameraLerp: 0.07,
   /** Extra camera lead along velocity, in px at max speed. */
-  cameraLookAhead: 72,
+  cameraLookAhead: 88,
   /** Soft planet gravity cap so the stick always wins, px/s². */
-  gravityCap: 88,
+  gravityCap: 70,
   /** Planet gravity mass scale (accel = mass / dist², then capped). */
-  gravityMass: 2_400_000,
+  gravityMass: 2_200_000,
   /** Gravity falls off past this range. */
   gravityRange: 520,
   /** Arcade bounce against planet circles. */
-  bounce: 0.72,
+  bounce: 0.68,
+  /** Full tank. */
+  energyMax: 1,
+  /** Full-stick drain per second. Empty in ~2.5s of hard burn. */
+  energyDrainPerSec: 0.4,
+  /** Regen per second while not burning. Full tank in ~6.5s. */
+  energyRegenPerSec: 0.155,
 } as const;
 
 export type StickSample = {
