@@ -55,23 +55,15 @@ export function createTextures(scene: Phaser.Scene): void {
     fillCircle(ctx, 6, 0, 3.2, "#7ee8ff");
   });
 
-  addCanvas(scene, "flame", 48, (ctx, size) => {
-    ctx.translate(size / 2, size / 2);
+  addCanvas(scene, "puff", 48, (ctx, size) => {
+    const c = size / 2;
+    const g = ctx.createRadialGradient(c, c, 1, c, c, c - 1);
+    g.addColorStop(0, "rgba(255, 236, 210, 0.85)");
+    g.addColorStop(0.35, "rgba(255, 196, 140, 0.4)");
+    g.addColorStop(1, "rgba(255, 160, 90, 0)");
+    ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.moveTo(-4, 0);
-    ctx.lineTo(-22, 7);
-    ctx.lineTo(-16, 0);
-    ctx.lineTo(-22, -7);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(255, 176, 96, 0.92)";
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(-6, 0);
-    ctx.lineTo(-16, 3.5);
-    ctx.lineTo(-12, 0);
-    ctx.lineTo(-16, -3.5);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(255, 244, 210, 0.95)";
+    ctx.arc(c, c, c - 1, 0, Math.PI * 2);
     ctx.fill();
   });
 

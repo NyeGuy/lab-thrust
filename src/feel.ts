@@ -15,12 +15,6 @@ export const FEEL = {
   stickRadius: 70,
   /** Extra grab padding around the ring. */
   stickHitPad: 28,
-  /** How fast the nose turns toward thrust, rad/s. */
-  turnRateThrust: 6.8,
-  /** How fast the nose eases toward velocity while coasting, rad/s. */
-  turnRateCoast: 2.4,
-  /** Skip facing updates below this speed when not thrusting. */
-  faceMinSpeed: 22,
   /** Camera follow lerp (0–1 per frame-ish Phaser lerp). */
   cameraLerp: 0.07,
   /** Extra camera lead along velocity, in px at max speed. */
@@ -48,7 +42,11 @@ export const FEEL = {
   sunGravityCap: 52,
   sunGravityRange: 1400,
   /** Extra reach past a planet surface to offer dock. */
-  dockRange: 88,
+  dockRange: 110,
+  /** Minimap box size in CSS pixels. */
+  mapSize: 92,
+  /** World radius (from sun) that fills the minimap. */
+  mapWorld: 1100,
   /** Sit this far outside the collision radius when parked. */
   dockPad: 18,
   /** Outward kick on undock, px/s. */

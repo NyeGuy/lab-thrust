@@ -3,9 +3,11 @@ import { consumeDockAction, resetDock, setDockMode } from "../dock";
 import { resetEnergy, tickEnergy } from "../energy";
 import { FEEL } from "../feel";
 import { getStick } from "../input/stickState";
+import { setMapSnap } from "../mapState";
 import { createTextures } from "../textures";
 
 type Planet = {
+  id: "clay" | "ice";
   sprite: Phaser.Physics.Arcade.Image;
   radius: number;
   orbit: number;
@@ -15,7 +17,8 @@ type Planet = {
 
 export class PlayScene extends Phaser.Scene {
   private ship!: Phaser.Physics.Arcade.Sprite;
-  private flame!: Phaser.GameObjects.Image;
+  private exhaust!: Phaser.GameObjects.Particles.ParticleEmitter;
+  private dockHalo!: Phaser.GameObjects.Arc;
   private sun!: Phaser.Physics.Arcade.Image;
   private planets: Planet[] = [];
   private starsFar!: Phaser.GameObjects.TileSprite;
@@ -62,8 +65,8 @@ export class PlayScene extends Phaser.Scene {
     this.sun.refreshBody();
     this.sun.setDepth(0);
 
-    this.addPlanet("planet-clay", 170, 560, 0.35, 0.07);
-    this.addPlanet("planet-ice", 146, 900, 3.5, 0.042);
+    this.addPlanet("clay", "planet-clay", 170, 560, 0.35, 0.07);
+    this.addPlanet("ice", "planet-ice", 146, 900, 3.5, 0.042);
 
     const inner = this.planets[0];
     if (!inner) {
@@ -83,9 +86,23 @@ export class PlayScene extends Phaser.Scene {
     this.ship.setBounce(FEEL.bounce);
     this.ship.setCollideWorldBounds(false);
 
-    this.flame = this.add.image(this.ship.x, this.ship.y, "flame");
-    this.flame.setDepth(1);
-    this.flame.setAlpha(0);
+    this.exhaust = this.add.particles(this.ship.x, this.ship.y, "puff", {
+      lifespan: { min: 420, max: 780 },
+      speed: { min: 6, max: 28 },
+      angle: { min: 0, max: 360 },
+      scale: { start: 0.28, end: 1.35 },
+      alpha: { start: 0.42, end: 0 },
+      frequency: 38,
+      quantity: 2,
+      blendMode: "ADD",
+      emitting: false,
+    });
+    this.exhaust.setDepth(1);
+
+    this.dockHalo = this.add.circle(0, 0, 40, 0xa8fff0, 0.05);
+    this.dockHalo.setStrokeStyle(2, 0xa8fff0, 0.42);
+    this.dockHalo.setVisible(false);
+    this.dockHalo.setDepth(0.5);
 
     this.physics.add.collider(this.ship, this.sun);
 
@@ -113,11 +130,13 @@ export class PlayScene extends Phaser.Scene {
     if (this.docked) {
       this.holdOnPlanet(this.docked);
       tickEnergy(dt, false, 0);
-      this.flame.setAlpha(0);
+      this.exhaust.emitting = false;
+      this.dockHalo.setVisible(false);
       setDockMode("undock");
       if (consumeDockAction()) {
         this.undock();
       }
+      this.publishMap();
       this.syncCamera(0, 0);
       this.parallax();
       return;
@@ -160,21 +179,18 @@ export class PlayScene extends Phaser.Scene {
 
     const vx = body.velocity.x;
     const vy = body.velocity.y;
-    const speed = Math.hypot(vx, vy);
-    const target = burning ? Math.atan2(stick.y, stick.x) : Math.atan2(vy, vx);
-    if (burning || speed > FEEL.faceMinSpeed) {
-      const rate = burning ? FEEL.turnRateThrust : FEEL.turnRateCoast;
-      this.ship.rotation = Phaser.Math.Angle.RotateTo(this.ship.rotation, target, rate * dt);
+    if (burning) {
+      this.ship.setRotation(Math.atan2(stick.y, stick.x));
     }
 
-    this.flame.setPosition(this.ship.x, this.ship.y);
-    this.flame.setRotation(this.ship.rotation);
+    const back = 14;
+    this.exhaust.setPosition(
+      this.ship.x - Math.cos(this.ship.rotation) * back,
+      this.ship.y - Math.sin(this.ship.rotation) * back,
+    );
+    this.exhaust.emitting = burning;
     if (burning) {
-      const pulse = 0.55 + 0.45 * stick.magnitude;
-      this.flame.setAlpha(0.35 + 0.55 * stick.magnitude);
-      this.flame.setScale(0.7 + 0.7 * stick.magnitude, pulse);
-    } else {
-      this.flame.setAlpha(0);
+      this.exhaust.setQuantity(1 + Math.round(stick.magnitude * 2));
     }
 
     this.refreshDockRange();
@@ -186,8 +202,33 @@ export class PlayScene extends Phaser.Scene {
     }
     setDockMode(this.docked ? "undock" : this.inRange ? "dock" : "hidden");
 
+    this.publishMap();
     this.syncCamera(vx, vy);
     this.parallax();
+  }
+
+  private showDockHalo(planet: Planet): void {
+    this.dockHalo.setVisible(true);
+    this.dockHalo.setPosition(planet.sprite.x, planet.sprite.y);
+    this.dockHalo.setRadius(planet.radius + 26);
+    const pulse = 0.42 + 0.18 * Math.sin(this.time.now / 280);
+    this.dockHalo.setStrokeStyle(3, 0x8ef0c8, pulse);
+  }
+
+  private publishMap(): void {
+    const clay = this.planets.find((planet) => planet.id === "clay");
+    const ice = this.planets.find((planet) => planet.id === "ice");
+    if (!clay || !ice) {
+      return;
+    }
+    setMapSnap({
+      shipX: this.ship.x,
+      shipY: this.ship.y,
+      clayX: clay.sprite.x,
+      clayY: clay.sprite.y,
+      iceX: ice.sprite.x,
+      iceY: ice.sprite.y,
+    });
   }
 
   private stepOrbits(dt: number): void {
@@ -203,6 +244,7 @@ export class PlayScene extends Phaser.Scene {
   private refreshDockRange(): void {
     if (this.undockBan > 0) {
       this.inRange = null;
+      this.dockHalo.setVisible(false);
       return;
     }
     let best: Planet | null = null;
@@ -217,6 +259,9 @@ export class PlayScene extends Phaser.Scene {
     this.inRange = best;
     if (best) {
       this.lastDockable = best;
+      this.showDockHalo(best);
+    } else {
+      this.dockHalo.setVisible(false);
     }
   }
 
@@ -238,8 +283,7 @@ export class PlayScene extends Phaser.Scene {
     const y = planet.sprite.y + Math.sin(this.dockAngle) * reach;
     this.ship.setPosition(x, y);
     this.ship.setRotation(this.dockAngle);
-    this.flame.setPosition(x, y);
-    this.flame.setRotation(this.dockAngle);
+    this.exhaust.setPosition(x, y);
   }
 
   private undock(): void {
@@ -280,6 +324,7 @@ export class PlayScene extends Phaser.Scene {
   };
 
   private addPlanet(
+    id: "clay" | "ice",
     key: string,
     radius: number,
     orbit: number,
@@ -296,6 +341,6 @@ export class PlayScene extends Phaser.Scene {
       sprite.body.allowGravity = false;
       sprite.body.moves = false;
     }
-    this.planets.push({ sprite, radius, orbit, angle, spin });
+    this.planets.push({ id, sprite, radius, orbit, angle, spin });
   }
 }

@@ -3,6 +3,7 @@ import { getDockMode, requestDockAction } from "../dock";
 import { getEnergy } from "../energy";
 import { FEEL, remapStick, readSafeInsets, idleStick } from "../feel";
 import { getStick, setStick } from "../input/stickState";
+import { getMapSnap } from "../mapState";
 
 export class HudScene extends Phaser.Scene {
   private ring!: Phaser.GameObjects.Arc;
@@ -16,6 +17,9 @@ export class HudScene extends Phaser.Scene {
   private barInner = 212;
   private dockX = 0;
   private dockY = 0;
+  private mapGfx!: Phaser.GameObjects.Graphics;
+  private mapX = 0;
+  private mapY = 0;
   private pointerId: number | null = null;
   private originX = 0;
   private originY = 0;
@@ -75,6 +79,10 @@ export class HudScene extends Phaser.Scene {
       .setDepth(15)
       .setVisible(false);
 
+    this.mapGfx = this.add.graphics();
+    this.mapGfx.setScrollFactor(0);
+    this.mapGfx.setDepth(16);
+
     this.layout();
     this.scale.on("resize", this.layout, this);
 
@@ -98,13 +106,17 @@ export class HudScene extends Phaser.Scene {
     this.originY = h - safe.bottom - margin - FEEL.stickRadius;
     this.ring.setPosition(this.originX, this.originY);
     this.knob.setPosition(this.originX, this.originY);
-    this.barWidth = Math.min(220, Math.max(160, w - 48));
+    this.mapX = safe.left + 10;
+    this.mapY = safe.top + 10;
+    const mapRight = this.mapX + FEEL.mapSize + 12;
+    this.barWidth = Math.min(220, Math.max(132, w - mapRight - 16));
     this.barInner = this.barWidth - 8;
     this.barTrack.setSize(this.barWidth, 10);
     this.barFill.setSize(this.barInner, 6);
-    this.hint.setPosition(w / 2, safe.top + 14);
-    this.barTrack.setPosition(w / 2, safe.top + 42);
-    this.barFill.setPosition(w / 2 - this.barInner / 2, safe.top + 42);
+    const barY = this.mapY + 18;
+    this.hint.setPosition(mapRight + this.barWidth / 2, barY + 16);
+    this.barTrack.setPosition(mapRight + this.barWidth / 2, barY);
+    this.barFill.setPosition(mapRight + 4, barY);
     this.dockX = this.originX + FEEL.stickRadius + 52;
     this.dockY = this.originY;
     this.dockBtn.setPosition(this.dockX, this.dockY);
@@ -192,6 +204,32 @@ export class HudScene extends Phaser.Scene {
     if (show) {
       this.dockLabel.setText(dock);
     }
+
+    this.drawMap();
+  }
+
+  private drawMap(): void {
+    const snap = getMapSnap();
+    const size = FEEL.mapSize;
+    const pad = 7;
+    const scale = (size / 2 - pad) / FEEL.mapWorld;
+    const cx = this.mapX + size / 2;
+    const cy = this.mapY + size / 2;
+    const clampR = size / 2 - 5;
+    const g = this.mapGfx;
+    g.clear();
+    g.fillStyle(0x0a1018, 0.78);
+    g.fillRoundedRect(this.mapX, this.mapY, size, size, 10);
+    g.lineStyle(1, 0xffffff, 0.26);
+    g.strokeRoundedRect(this.mapX, this.mapY, size, size, 10);
+    g.lineStyle(1, 0xffffff, 0.12);
+    g.strokeCircle(cx, cy, 560 * scale);
+    g.strokeCircle(cx, cy, 900 * scale);
+    g.fillStyle(0xffc24a, 1);
+    g.fillCircle(cx, cy, 4);
+    plot(g, cx, cy, snap.clayX, snap.clayY, scale, clampR, 0xc47a4a, 3.4);
+    plot(g, cx, cy, snap.iceX, snap.iceY, scale, clampR, 0x7aa0b8, 3);
+    plot(g, cx, cy, snap.shipX, snap.shipY, scale, clampR, 0x7ee8ff, 2.2);
   }
 
   private hitDock(pointer: Phaser.Input.Pointer): boolean {
@@ -216,6 +254,28 @@ export class HudScene extends Phaser.Scene {
       ease: "Quad.easeOut",
     });
   }
+}
+
+function plot(
+  g: Phaser.GameObjects.Graphics,
+  cx: number,
+  cy: number,
+  x: number,
+  y: number,
+  scale: number,
+  clampR: number,
+  color: number,
+  r: number,
+): void {
+  let dx = x * scale;
+  let dy = y * scale;
+  const dist = Math.hypot(dx, dy);
+  if (dist > clampR) {
+    dx = (dx / dist) * clampR;
+    dy = (dy / dist) * clampR;
+  }
+  g.fillStyle(color, 1);
+  g.fillCircle(cx + dx, cy + dy, r);
 }
 
 function energyColor(energy: number): number {
