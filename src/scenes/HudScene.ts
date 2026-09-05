@@ -58,7 +58,7 @@ export class HudScene extends Phaser.Scene {
     this.barFill.setScrollFactor(0);
     this.barFill.setDepth(13);
 
-    this.dockBtn = this.add.circle(0, 0, 30, 0xffffff, 0.1);
+    this.dockBtn = this.add.circle(0, 0, 34, 0xffffff, 0.12);
     this.dockBtn.setStrokeStyle(2, 0xffffff, 0.4);
     this.dockBtn.setScrollFactor(0);
     this.dockBtn.setDepth(14);
@@ -200,7 +200,7 @@ export class HudScene extends Phaser.Scene {
     }
     const dx = pointer.position.x - this.dockX;
     const dy = pointer.position.y - this.dockY;
-    return dx * dx + dy * dy <= 34 * 34;
+    return dx * dx + dy * dy <= 40 * 40;
   }
 
   private fadeHint(): void {

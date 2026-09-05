@@ -40,9 +40,9 @@ Tunables live in `src/feel.ts`. After playtest (softer vacuum + energy + a rotat
 - **Facing** toward thrust at `6.8` rad/s, then toward velocity at `2.4` rad/s while coasting.
 - **Camera** lerp `0.07`, look-ahead `88` px, zoom `0.76`.
 - **Sun** at the origin, radius `118`. Soft gravity mass `5.2e6`, cap `52` px/s², range `1400`.
-- **Two planets** (clay radius `170`, ice `146`) orbit at `560` / `900` px, `0.11` / `0.065` rad/s. Bounce `0.68`. Planet gravity mass `2.2e6`, cap `70`, range `520`.
+- **Two planets** (clay radius `170`, ice `146`) orbit at `560` / `900` px, `0.07` / `0.042` rad/s. Bounce `0.68`. Planet gravity mass `2.2e6`, cap `70`, range `520`.
 - **Energy** tank `1`. Full stick drains `0.4` /s (~2.5s empty). Regen `0.155` /s while not burning (~6.5s full), including while docked. Empty = stick still moves, no burn. Top bar flashes if you push on an empty tank.
-- **Dock** when the ship is within `44` px of a planet surface. Tap **dock** (circle to the right of the stick). Parked: no free physics, ship rides that surface as the planet orbits. **Undock** restores Arcade flight and kicks you out at `110` px/s. `0.55` s before a new dock is offered.
+- **Dock** when the ship is within `88` px of a planet surface. Tap **dock** (circle to the right of the stick). Parked: no free physics, ship rides that surface as the planet orbits. **Undock** restores Arcade flight and kicks you out at `110` px/s. `0.55` s before a new dock is offered.
 
 Touch is first. Mouse drag on the same circle works for desktop.
 

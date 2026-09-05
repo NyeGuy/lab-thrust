@@ -61,8 +61,8 @@ export class PlayScene extends Phaser.Scene {
     this.sun.refreshBody();
     this.sun.setDepth(0);
 
-    this.addPlanet("planet-clay", 170, 560, 0.35, 0.11);
-    this.addPlanet("planet-ice", 146, 900, 3.5, 0.065);
+    this.addPlanet("planet-clay", 170, 560, 0.35, 0.07);
+    this.addPlanet("planet-ice", 146, 900, 3.5, 0.042);
 
     const inner = this.planets[0];
     if (!inner) {
@@ -70,8 +70,8 @@ export class PlayScene extends Phaser.Scene {
     }
     const inward = Math.atan2(-inner.sprite.y, -inner.sprite.x);
     this.ship = this.physics.add.sprite(
-      inner.sprite.x + Math.cos(inward) * (inner.radius + 90),
-      inner.sprite.y + Math.sin(inward) * (inner.radius + 90),
+      inner.sprite.x + Math.cos(inward) * (inner.radius + 70),
+      inner.sprite.y + Math.sin(inward) * (inner.radius + 70),
       "ship",
     );
     this.ship.setDepth(2);

@@ -48,7 +48,7 @@ export const FEEL = {
   sunGravityCap: 52,
   sunGravityRange: 1400,
   /** Extra reach past a planet surface to offer dock. */
-  dockRange: 44,
+  dockRange: 88,
   /** Sit this far outside the collision radius when parked. */
   dockPad: 18,
   /** Outward kick on undock, px/s. */
