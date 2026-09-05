@@ -75,12 +75,35 @@ export function createTextures(scene: Phaser.Scene): void {
     ctx.fill();
   });
 
-  addPlanet(scene, "planet-clay", 220, ["#3a2218", "#c47a4a", "#e8c39a"]);
-  addPlanet(scene, "planet-ice", 140, ["#1c2a36", "#7aa0b8", "#d7e8f2"]);
-  addPlanet(scene, "planet-wine", 176, ["#2a1218", "#8a4a5c", "#d9a3b0"]);
+  addPlanet(scene, "planet-clay", 380, ["#3a2218", "#c47a4a", "#e8c39a"]);
+  addPlanet(scene, "planet-ice", 330, ["#1c2a36", "#7aa0b8", "#d7e8f2"]);
+  addSun(scene, "sun", 280);
 
   addStars(scene, "stars-far", 512, 70, 1.1);
   addStars(scene, "stars-near", 512, 36, 1.8);
+}
+
+function addSun(scene: Phaser.Scene, key: string, size: number): void {
+  addCanvas(scene, key, size, (ctx, s) => {
+    const c = s / 2;
+    const r = s / 2 - 8;
+    const corona = ctx.createRadialGradient(c, c, r * 0.28, c, c, r);
+    corona.addColorStop(0, "rgba(255, 244, 210, 1)");
+    corona.addColorStop(0.35, "rgba(255, 196, 92, 0.95)");
+    corona.addColorStop(0.7, "rgba(255, 140, 48, 0.35)");
+    corona.addColorStop(1, "rgba(255, 120, 40, 0)");
+    ctx.fillStyle = corona;
+    ctx.beginPath();
+    ctx.arc(c, c, r, 0, Math.PI * 2);
+    ctx.fill();
+    const core = ctx.createRadialGradient(c - r * 0.12, c - r * 0.14, 4, c, c, r * 0.42);
+    core.addColorStop(0, "#fff8e6");
+    core.addColorStop(1, "#ffb24a");
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(c, c, r * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+  });
 }
 
 function addPlanet(scene: Phaser.Scene, key: string, size: number, stops: string[]): void {

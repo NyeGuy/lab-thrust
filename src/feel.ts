@@ -39,6 +39,22 @@ export const FEEL = {
   energyDrainPerSec: 0.4,
   /** Regen per second while not burning. Full tank in ~6.5s. */
   energyRegenPerSec: 0.155,
+  /** Camera zoom so a phone still sees the sun + a planet. */
+  cameraZoom: 0.76,
+  /** Sun disc radius (collision + gravity body). */
+  sunRadius: 118,
+  /** Sun gravity mass / cap / range. Stick still wins. */
+  sunGravityMass: 5_200_000,
+  sunGravityCap: 52,
+  sunGravityRange: 1400,
+  /** Extra reach past a planet surface to offer dock. */
+  dockRange: 44,
+  /** Sit this far outside the collision radius when parked. */
+  dockPad: 18,
+  /** Outward kick on undock, px/s. */
+  undockImpulse: 110,
+  /** Seconds before a new dock is offered after undock. */
+  undockCooldown: 0.55,
 } as const;
 
 export type StickSample = {

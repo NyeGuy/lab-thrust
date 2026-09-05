@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { getDockMode, requestDockAction } from "../dock";
 import { getEnergy } from "../energy";
 import { FEEL, remapStick, readSafeInsets, idleStick } from "../feel";
 import { getStick, setStick } from "../input/stickState";
@@ -9,8 +10,12 @@ export class HudScene extends Phaser.Scene {
   private hint!: Phaser.GameObjects.Text;
   private barTrack!: Phaser.GameObjects.Rectangle;
   private barFill!: Phaser.GameObjects.Rectangle;
+  private dockBtn!: Phaser.GameObjects.Arc;
+  private dockLabel!: Phaser.GameObjects.Text;
   private barWidth = 220;
   private barInner = 212;
+  private dockX = 0;
+  private dockY = 0;
   private pointerId: number | null = null;
   private originX = 0;
   private originY = 0;
@@ -53,6 +58,23 @@ export class HudScene extends Phaser.Scene {
     this.barFill.setScrollFactor(0);
     this.barFill.setDepth(13);
 
+    this.dockBtn = this.add.circle(0, 0, 30, 0xffffff, 0.1);
+    this.dockBtn.setStrokeStyle(2, 0xffffff, 0.4);
+    this.dockBtn.setScrollFactor(0);
+    this.dockBtn.setDepth(14);
+    this.dockBtn.setVisible(false);
+
+    this.dockLabel = this.add
+      .text(0, 0, "dock", {
+        fontFamily: "system-ui, sans-serif",
+        fontSize: "14px",
+        color: "#e8eef6",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(15)
+      .setVisible(false);
+
     this.layout();
     this.scale.on("resize", this.layout, this);
 
@@ -83,6 +105,10 @@ export class HudScene extends Phaser.Scene {
     this.hint.setPosition(w / 2, safe.top + 14);
     this.barTrack.setPosition(w / 2, safe.top + 42);
     this.barFill.setPosition(w / 2 - this.barInner / 2, safe.top + 42);
+    this.dockX = this.originX + FEEL.stickRadius + 52;
+    this.dockY = this.originY;
+    this.dockBtn.setPosition(this.dockX, this.dockY);
+    this.dockLabel.setPosition(this.dockX, this.dockY);
     if (this.pointerId === null) {
       setStick(idleStick);
     }
@@ -90,6 +116,11 @@ export class HudScene extends Phaser.Scene {
 
   private onDown = (pointer: Phaser.Input.Pointer): void => {
     if (this.pointerId !== null) {
+      return;
+    }
+    if (this.hitDock(pointer)) {
+      requestDockAction();
+      this.fadeHint();
       return;
     }
     const reach = FEEL.stickRadius + FEEL.stickHitPad;
@@ -153,6 +184,23 @@ export class HudScene extends Phaser.Scene {
       this.barTrack.setStrokeStyle(1, 0xffffff, 0.28);
       this.barTrack.setFillStyle(0xffffff, 0.1);
     }
+
+    const dock = getDockMode();
+    const show = dock !== "hidden";
+    this.dockBtn.setVisible(show);
+    this.dockLabel.setVisible(show);
+    if (show) {
+      this.dockLabel.setText(dock);
+    }
+  }
+
+  private hitDock(pointer: Phaser.Input.Pointer): boolean {
+    if (getDockMode() === "hidden") {
+      return false;
+    }
+    const dx = pointer.position.x - this.dockX;
+    const dy = pointer.position.y - this.dockY;
+    return dx * dx + dy * dy <= 34 * 34;
   }
 
   private fadeHint(): void {

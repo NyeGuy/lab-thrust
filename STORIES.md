@@ -12,8 +12,12 @@ Let go and the burn dies, but the ship does not. Drag is light on purpose. You s
 
 ## Burns are a budget
 
-The bar at the top is the only clock. A hard push empties it. Coasting fills it. You learn the short tap: enough delta-v to miss the clay world, then hands off while the tank sips. Hold the stick like a throttle and you sit in the quiet, flame gone, waiting for a mouthful of green.
+The bar at the top is the only clock. A hard push empties it. Coasting fills it. You learn the short tap: enough delta-v to kiss a world, then hands off while the tank sips. Hold the stick like a throttle and you sit in the quiet, flame gone, waiting for a mouthful of green.
 
-## A planet is a suggestion
+## Two worlds, one lamp
 
-The three balls are scenery with a little pull and a soft bounce. You can ignore them. You can clip one and come off at a new angle. You can lean the stick against the tug and draw a lazy curve. Nothing to dock with. Nothing to buy. Just enough mass that empty space has a grain.
+There is a lamp in the middle and exactly two planets walking circles around it. They are big enough to be places, not pebbles. You can bounce. You can park. You cannot buy anything.
+
+## Parked
+
+When you are over a surface, a second circle appears next to the stick: dock. Tap it and the dart sits. The world keeps moving; you go with it. Undock puts the physics back in your hands — a little outward kick, then coast, then another burn if the bar allows it.
