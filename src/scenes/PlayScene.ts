@@ -64,7 +64,16 @@ export class PlayScene extends Phaser.Scene {
     this.addPlanet("planet-clay", 170, 560, 0.35, 0.11);
     this.addPlanet("planet-ice", 146, 900, 3.5, 0.065);
 
-    this.ship = this.physics.add.sprite(30, 430, "ship");
+    const inner = this.planets[0];
+    if (!inner) {
+      throw new Error("inner planet missing");
+    }
+    const inward = Math.atan2(-inner.sprite.y, -inner.sprite.x);
+    this.ship = this.physics.add.sprite(
+      inner.sprite.x + Math.cos(inward) * (inner.radius + 90),
+      inner.sprite.y + Math.sin(inward) * (inner.radius + 90),
+      "ship",
+    );
     this.ship.setDepth(2);
     this.ship.setCircle(13, 19, 19);
     this.ship.setDamping(false);
