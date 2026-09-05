@@ -32,7 +32,7 @@ export const FEEL = {
   /** Gravity falls off past this range. */
   gravityRange: 520,
   /** Arcade bounce against planet circles. */
-  bounce: 0.58,
+  bounce: 0.72,
 } as const;
 
 export type StickSample = {

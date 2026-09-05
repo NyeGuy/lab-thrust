@@ -134,6 +134,7 @@ export class PlayScene extends Phaser.Scene {
   private placePlanet(x: number, y: number, key: string, radius: number): void {
     const sprite = this.physics.add.staticImage(x, y, key);
     sprite.setCircle(radius, sprite.width / 2 - radius, sprite.height / 2 - radius);
+    sprite.refreshBody();
     sprite.setDepth(0);
     this.planets.push({ sprite });
   }

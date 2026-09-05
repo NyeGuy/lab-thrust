@@ -39,7 +39,7 @@ Tunables live in `src/feel.ts`. Current v0:
 - **Stick deadzone** `0.14`, then a light `1.12` exponent so the first third of the pad is finer. Ring radius `70` px plus `28` px grab pad, parked in the bottom-left above the safe-area inset.
 - **Facing** turns toward thrust at `10` rad/s while you push, then eases toward velocity at `3.6` rad/s when you let go (only if you are still moving).
 - **Camera** follow lerp `0.09`, plus up to `72` px of look-ahead along velocity.
-- **Planets** are circle bodies with bounce `0.58` and a cheap inverse-square tug (mass `2.4e6`, cap `88` px/s², range `520`). The stick always wins.
+- **Planets** are circle bodies with bounce `0.72` and a cheap inverse-square tug (mass `2.4e6`, cap `88` px/s², range `520`). The stick always wins.
 
 Touch is first. Mouse drag on the same circle works for desktop.
 
