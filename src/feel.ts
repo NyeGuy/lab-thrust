@@ -42,7 +42,9 @@ export const FEEL = {
   sunGravityCap: 52,
   sunGravityRange: 1400,
   /** Extra reach past a planet surface to offer dock. */
-  dockRange: 110,
+  dockRange: 130,
+  /** Keep dock offered this long after sliding just out of range. */
+  dockGrace: 2.4,
   /** Minimap box size in CSS pixels. */
   mapSize: 92,
   /** World radius (from sun) that fills the minimap. */

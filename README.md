@@ -44,7 +44,7 @@ Tunables live in `src/feel.ts`. After playtest (softer vacuum + energy + a rotat
 - **Energy** tank `1`. Full stick drains `0.4` /s (~2.5s empty). Regen `0.155` /s while not burning (~6.5s full), including while docked. Empty = stick still moves, no burn. Top bar flashes if you push on an empty tank.
 - **Thrust VFX** is a soft spherical puff cloud (particle emitter) behind the ship, only while burning.
 - **Minimap** upper-left, notch-safe: sun, two moving planets, ship.
-- **Dock** when the ship is within `110` px of a planet surface (pulsing halo + **dock** circle to the right of the stick). Parked: no free physics, ship rides that surface as the planet orbits. **Undock** restores Arcade flight and kicks you out at `110` px/s. `0.55` s before a new dock is offered. Milestone: dock clay, undock, dock ice while they orbit.
+- **Dock** when the ship is within `130` px of a planet surface (pulsing halo + **dock** circle to the right of the stick). Spawn matches the inner planet's orbital velocity so you ride with it. Button stays offered `2.4` s after you slide just out of range. Parked: no free physics, ship rides that surface as the planet orbits. **Undock** restores Arcade flight and kicks you out at `110` px/s. `0.55` s before a new dock is offered. Milestone: dock clay, undock, dock ice while they orbit.
 
 Touch is first. Mouse drag on the same circle works for desktop.
 

@@ -28,6 +28,7 @@ export class PlayScene extends Phaser.Scene {
   private undockBan = 0;
   private inRange: Planet | null = null;
   private lastDockable: Planet | null = null;
+  private dockGrace = 0;
 
   constructor() {
     super({ key: "play" });
@@ -85,6 +86,8 @@ export class PlayScene extends Phaser.Scene {
     this.ship.setMaxVelocity(FEEL.maxSpeed, FEEL.maxSpeed);
     this.ship.setBounce(FEEL.bounce);
     this.ship.setCollideWorldBounds(false);
+    const orbitSpeed = inner.orbit * inner.spin;
+    this.ship.setVelocity(-Math.sin(inner.angle) * orbitSpeed, Math.cos(inner.angle) * orbitSpeed);
 
     this.exhaust = this.add.particles(this.ship.x, this.ship.y, "puff", {
       lifespan: { min: 520, max: 920 },
@@ -193,14 +196,15 @@ export class PlayScene extends Phaser.Scene {
       this.exhaust.setQuantity(2 + Math.round(stick.magnitude * 3));
     }
 
-    this.refreshDockRange();
+    this.refreshDockRange(dt);
     if (consumeDockAction()) {
       const target = this.inRange ?? this.lastDockable;
       if (target) {
         this.dockTo(target);
       }
     }
-    setDockMode(this.docked ? "undock" : this.inRange ? "dock" : "hidden");
+    const canDock = Boolean(this.inRange || (this.lastDockable && this.dockGrace > 0));
+    setDockMode(this.docked ? "undock" : canDock ? "dock" : "hidden");
 
     this.publishMap();
     this.syncCamera(vx, vy);
@@ -241,7 +245,7 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
-  private refreshDockRange(): void {
+  private refreshDockRange(dt: number): void {
     if (this.undockBan > 0) {
       this.inRange = null;
       this.dockHalo.setVisible(false);
@@ -259,9 +263,18 @@ export class PlayScene extends Phaser.Scene {
     this.inRange = best;
     if (best) {
       this.lastDockable = best;
+      this.dockGrace = FEEL.dockGrace;
       this.showDockHalo(best);
     } else {
-      this.dockHalo.setVisible(false);
+      this.dockGrace = Math.max(0, this.dockGrace - dt);
+      if (this.dockGrace <= 0) {
+        this.lastDockable = null;
+      }
+      if (this.lastDockable) {
+        this.showDockHalo(this.lastDockable);
+      } else {
+        this.dockHalo.setVisible(false);
+      }
     }
   }
 
@@ -292,6 +305,7 @@ export class PlayScene extends Phaser.Scene {
     this.inRange = null;
     this.undockBan = FEEL.undockCooldown;
     this.lastDockable = null;
+    this.dockGrace = 0;
     if (this.ship.body) {
       this.ship.body.enable = true;
     }
