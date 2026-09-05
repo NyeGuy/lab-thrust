@@ -20,4 +20,4 @@ There is a lamp in the middle and exactly two planets walking circles around it.
 
 ## Parked
 
-When you are over a surface, a second circle appears next to the stick: dock. Tap it and the dart sits. The world keeps moving; you go with it. Undock puts the physics back in your hands — a little outward kick, then coast, then another burn if the bar allows it.
+When you are over a surface, a second circle appears next to the stick: dock. Tap it — or the world itself — and the dart sits. The world keeps moving; you go with it. Undock puts the physics back in your hands — a little outward kick, then coast, then another burn if the bar allows it.

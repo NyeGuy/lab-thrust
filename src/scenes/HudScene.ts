@@ -138,12 +138,16 @@ export class HudScene extends Phaser.Scene {
     const reach = FEEL.stickRadius + FEEL.stickHitPad;
     const dx = pointer.position.x - this.originX;
     const dy = pointer.position.y - this.originY;
-    if (dx * dx + dy * dy > reach * reach) {
+    if (dx * dx + dy * dy <= reach * reach) {
+      this.pointerId = pointer.id;
+      this.applyPointer(pointer);
+      this.fadeHint();
       return;
     }
-    this.pointerId = pointer.id;
-    this.applyPointer(pointer);
-    this.fadeHint();
+    if (getDockMode() !== "hidden") {
+      requestDockAction();
+      this.fadeHint();
+    }
   };
 
   private onMove = (pointer: Phaser.Input.Pointer): void => {

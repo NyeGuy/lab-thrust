@@ -116,6 +116,9 @@ export class PlayScene extends Phaser.Scene {
 
     resetEnergy();
     resetDock();
+    this.refreshDockRange(0);
+    setDockMode(this.inRange ? "dock" : "hidden");
+    this.publishMap();
     this.scale.on("resize", this.onResize, this);
     this.scene.launch("hud");
 
@@ -176,6 +179,13 @@ export class PlayScene extends Phaser.Scene {
       const accel = Math.min(FEEL.gravityMass / (dist * dist), FEEL.gravityCap);
       ax += (dx / dist) * accel;
       ay += (dy / dist) * accel;
+    }
+
+    const follow = this.inRange ?? (this.dockGrace > 0 ? this.lastDockable : null);
+    if (!burning && follow) {
+      const keep = follow.orbit * follow.spin;
+      ax += (-Math.sin(follow.angle) * keep - body.velocity.x) * 2.8;
+      ay += (Math.cos(follow.angle) * keep - body.velocity.y) * 2.8;
     }
 
     this.ship.setAcceleration(ax, ay);
