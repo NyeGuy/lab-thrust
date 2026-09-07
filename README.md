@@ -1,5 +1,11 @@
 # lab-thrust
 
+| Owner | Lead | CoS | Merge |
+| --- | --- | --- | --- |
+| **Crucible** | **Forge** | **Nyborg** | **Nye** |
+
+**PARKED** — docs-only until Nye or Nyborg reopen. Pipeline, park rules, and remotes: **[PIPELINE.md](./PIPELINE.md)**. Agent rules: **[AGENTS.md](./AGENTS.md)**.
+
 Mobile ship-feel POC. Open it, drag the stick, close it. Feel is the product for v0.
 
 One ship, one virtual joystick, a sun with two large orbiting planets, dock/undock, and an energy bar that rations burns. No menus, no characters, no trading.
@@ -25,9 +31,13 @@ npm run preview
 - Phaser 4 (`phaser` ^4.2)
 - Vite + TypeScript
 - Arcade physics (no Matter)
-- Static `dist` deploy
+- Static `dist` deploy on Vercel
 
 Graphics are generated at runtime. No image assets.
+
+Primary GitHub: https://github.com/NyeGuy/lab-thrust. Active restore: [PR #1](https://github.com/NyeGuy/lab-thrust/pull/1) (`cursor/mobile-ship-feel-bba3`). SSO preview: https://lab-thrust-protostar1.vercel.app (Vercel Authentication / SSO may gate it).
+
+Canon Protostar is Nye-local — there is no public GitHub remote yet. Do not invent one. See `PIPELINE.md`.
 
 ## Feel notes
 
@@ -50,4 +60,4 @@ Touch is first. Mouse drag on the same circle works for desktop.
 
 ## Out of scope (v0)
 
-Menus, dialogue, characters, trading, a third planet, or anything from lab-hitting / lab-play / Protostar canon.
+Menus, dialogue, characters, trading, a third planet, Satellite Lab, baseball / lab-hitting / lab-play, or Protostar canon beyond this mobile ship-feel POC.
